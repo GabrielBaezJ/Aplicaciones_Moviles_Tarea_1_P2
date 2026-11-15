@@ -10,12 +10,12 @@ class AsignaturaModel extends Asignatura {
   factory AsignaturaModel.fromJson(Map<String, dynamic> json) {
     return AsignaturaModel(
       id: json['id'],
-      nombre: json['title'] ?? '',
-      codigo: json['sku'] ?? '',
+      nombre: json['nombre'] ?? '',
+      codigo: json['codigo'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'title': nombre, 'sku': codigo};
+    return {'nombre': nombre, 'codigo': codigo};
   }
 }

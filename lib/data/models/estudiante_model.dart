@@ -11,12 +11,12 @@ class EstudianteModel extends Estudiante {
   factory EstudianteModel.fromJson(Map<String, dynamic> json) {
     return EstudianteModel(
       id: json['id'],
-      nombre: json['firstName'] ?? '',
-      apellido: json['lastName'] ?? '',
+      nombre: json['nombre'] ?? '',
+      apellido: json['apellido'] ?? '',
       email: json['email'] ?? '',
     );
   }
   Map<String, dynamic> toJson() {
-    return {'firstName': nombre, 'lastName': apellido, 'email': email};
+    return {'nombre': nombre, 'apellido': apellido, 'email': email};
   }
 }
