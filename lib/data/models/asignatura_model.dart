@@ -1,0 +1,21 @@
+import '../../domain/entities/asignatura.dart';
+
+class AsignaturaModel extends Asignatura {
+  AsignaturaModel({
+    required super.id,
+    required super.nombre,
+    required super.codigo,
+  });
+
+  factory AsignaturaModel.fromJson(Map<String, dynamic> json) {
+    return AsignaturaModel(
+      id: json['id'],
+      nombre: json['title'] ?? '',
+      codigo: json['sku'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'title': nombre, 'sku': codigo};
+  }
+}
