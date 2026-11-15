@@ -9,7 +9,7 @@ class AsignaturaModel extends Asignatura {
 
   factory AsignaturaModel.fromJson(Map<String, dynamic> json) {
     return AsignaturaModel(
-      id: json['id'],
+      id: int.tryParse(json['id'].toString()),
       nombre: json['nombre'] ?? '',
       codigo: json['codigo'] ?? '',
     );

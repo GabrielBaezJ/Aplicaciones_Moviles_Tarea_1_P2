@@ -5,14 +5,12 @@ import 'package:http/http.dart' as http;
 import '../models/asignatura_model.dart';
 
 class AsignaturaApi {
-  final String url =
-      'https://6af92e0c6d8b86fb22d6d8be.mockapi.io/api/v1/asignaturas';
+  final String url = 'https://6af92f556d8b86fb22d6d98e.mockapi.io/asignaturas';
 
   Future<List<AsignaturaModel>> obtenerAsignaturas() async {
-    final respuesta = await http.get(Uri.parse('$url?limit=20'));
+    final respuesta = await http.get(Uri.parse(url));
     if (respuesta.statusCode == 200) {
-      final datos = jsonDecode(respuesta.body);
-      final lista = datos['products'] as List;
+      final lista = jsonDecode(respuesta.body) as List;
       return lista.map((item) => AsignaturaModel.fromJson(item)).toList();
     }
     throw Exception('Error al cargar asignaturas');
@@ -20,7 +18,7 @@ class AsignaturaApi {
 
   Future<AsignaturaModel> crearAsignatura(AsignaturaModel asignatura) async {
     final respuesta = await http.post(
-      Uri.parse('$url/add'),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(asignatura.toJson()),
     );
