@@ -5,9 +5,10 @@ import 'package:http/http.dart' as http;
 import '../models/estudiante_model.dart';
 
 class EstudianteApi {
-  final String url = 'https://dummyjson.com/users';
+  final String url =
+      'https://6af92e0c6d8b86fb22d6d8be.mockapi.io/api/v1/estudiantes';
 
-  //modelo obtener dato
+  //modelo obtener estudiante
   Future<List<EstudianteModel>> obtenerEstudiantes() async {
     final respuesta = await http.get(Uri.parse('$url?limit=20'));
     if (respuesta.statusCode == 200) {

@@ -1,9 +1,12 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import '../models/asignatura_model.dart';
 
 class AsignaturaApi {
-  final String url = 'https://dummyjson.com/products';
+  final String url =
+      'https://6af92e0c6d8b86fb22d6d8be.mockapi.io/api/v1/asignaturas';
 
   Future<List<AsignaturaModel>> obtenerAsignaturas() async {
     final respuesta = await http.get(Uri.parse('$url?limit=20'));
