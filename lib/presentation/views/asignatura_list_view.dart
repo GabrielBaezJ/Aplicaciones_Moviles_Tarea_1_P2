@@ -14,9 +14,9 @@ class _AsignaturaListViewState extends State<AsignaturaListView> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () => context.read<AsignaturaViewModel>().cargarAsignaturas(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<AsignaturaViewModel>().cargarAsignaturas();
+    });
   }
 
   @override

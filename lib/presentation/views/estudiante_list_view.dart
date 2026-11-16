@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../routes/app_routes.dart';
 import '../viewmodels/estudiante_viewmodel.dart';
 
@@ -14,9 +15,9 @@ class _EstudianteListViewState extends State<EstudianteListView> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () => context.read<EstudianteViewModel>().cargarEstudiantes(),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) context.read<EstudianteViewModel>().cargarEstudiantes();
+    });
   }
 
   @override
@@ -29,58 +30,60 @@ class _EstudianteListViewState extends State<EstudianteListView> {
         onPressed: () => Navigator.pushNamed(context, AppRoutes.estudianteForm),
         child: const Icon(Icons.add),
       ),
-      body: Builder(
-        builder: (context) {
-          if (vm.cargando) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (vm.error != null && vm.estudiantes.isEmpty) {
-            return Center(child: Text(vm.error!));
-          }
-          if (vm.estudiantes.isEmpty) {
-            return const Center(child: Text('No hay estudiantes registrados'));
-          }
-          return ListView.builder(
-            itemCount: vm.estudiantes.length,
-            itemBuilder: (context, i) {
-              final estudiante = vm.estudiantes[i];
-              return ListTile(
-                title: Text('${estudiante.nombre} ${estudiante.apellido}'),
-                subtitle: Text(estudiante.email),
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  AppRoutes.estudianteDetalle,
-                  arguments: estudiante,
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: () => Navigator.pushNamed(
-                        context,
-                        AppRoutes.estudianteForm,
-                        arguments: estudiante,
+      body: vm.cargando
+          ? const Center(child: CircularProgressIndicator())
+          : vm.error != null && vm.estudiantes.isEmpty
+          ? Center(child: Text(vm.error!))
+          : vm.estudiantes.isEmpty
+          ? const Center(child: Text('No hay estudiantes registrados'))
+          : ListView.builder(
+              itemCount: vm.estudiantes.length,
+              itemBuilder: (context, index) {
+                final e = vm.estudiantes[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    child: Text(e.nombre.isEmpty ? '?' : e.nombre[0]),
+                  ),
+                  title: Text('${e.nombre} ${e.apellido}'),
+                  subtitle: Text(e.email),
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    AppRoutes.estudianteDetalle,
+                    arguments: e,
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: e.id == null
+                            ? null
+                            : () => Navigator.pushNamed(
+                                context,
+                                AppRoutes.estudianteForm,
+                                arguments: e,
+                              ),
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () async {
-                        final ok = await vm.eliminar(estudiante.id!);
-                        if (!ok && context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(vm.error ?? 'Error')),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: e.id == null
+                            ? null
+                            : () async {
+                                final ok = await vm.eliminar(e.id!);
+                                if (!ok && context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(vm.error ?? 'Error'),
+                                    ),
+                                  );
+                                }
+                              },
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }

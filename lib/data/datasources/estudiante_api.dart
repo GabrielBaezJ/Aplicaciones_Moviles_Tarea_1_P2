@@ -7,26 +7,45 @@ import '../models/estudiante_model.dart';
 class EstudianteApi {
   final String url =
       'https://6af92e0c6d8b86fb22d6d8be.mockapi.io/api/v1/estudiantes';
+  final http.Client? client;
 
-  //modelo obtener estudiante
+  EstudianteApi({this.client});
+
   Future<List<EstudianteModel>> obtenerEstudiantes() async {
-    final respuesta = await http.get(Uri.parse('$url?limit=20'));
+    final uri = Uri.parse('$url?limit=20');
+    final respuesta = await (client?.get(uri) ?? http.get(uri));
     if (respuesta.statusCode == 200) {
       final datos = jsonDecode(respuesta.body);
-      final lista = datos['users'] as List;
-
-      return lista.map((item) => EstudianteModel.fromJson(item)).toList();
+      if (datos is! List) {
+        throw const FormatException(
+          'La respuesta de estudiantes debe ser una lista.',
+        );
+      }
+      return datos.map((item) {
+        if (item is! Map<String, dynamic>) {
+          throw const FormatException(
+            'Cada estudiante debe ser un objeto JSON.',
+          );
+        }
+        return EstudianteModel.fromJson(item);
+      }).toList();
     }
     throw Exception('Error al cargar estudiantes');
   }
 
-  //metodo crear estudiante
   Future<EstudianteModel> crearEstudiante(EstudianteModel estudiante) async {
-    final respuesta = await http.post(
-      Uri.parse('$url/add'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(estudiante.toJson()),
-    );
+    final uri = Uri.parse(url);
+    final respuesta =
+        await (client?.post(
+              uri,
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(estudiante.toJson()),
+            ) ??
+            http.post(
+              uri,
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(estudiante.toJson()),
+            ));
     if (respuesta.statusCode == 200 || respuesta.statusCode == 201) {
       return EstudianteModel.fromJson(
         jsonDecode(respuesta.body) as Map<String, dynamic>,
@@ -35,15 +54,21 @@ class EstudianteApi {
     throw Exception('Error al crear estudiante');
   }
 
-  //metodo actualizar estudiante
   Future<EstudianteModel> actualizarEstudiante(
     EstudianteModel estudiante,
   ) async {
-    final respuesta = await http.put(
-      Uri.parse('$url/${estudiante.id}'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(estudiante.toJson()),
-    );
+    final uri = Uri.parse('$url/${estudiante.id}');
+    final respuesta =
+        await (client?.put(
+              uri,
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(estudiante.toJson()),
+            ) ??
+            http.put(
+              uri,
+              headers: {'Content-Type': 'application/json'},
+              body: jsonEncode(estudiante.toJson()),
+            ));
     if (respuesta.statusCode == 200 || respuesta.statusCode == 201) {
       return EstudianteModel.fromJson(
         jsonDecode(respuesta.body) as Map<String, dynamic>,
@@ -54,7 +79,8 @@ class EstudianteApi {
 
   //metodo eliminar estudiante
   Future<void> eliminarEstudiante(int id) async {
-    final respuesta = await http.delete(Uri.parse('$url/$id'));
+    final uri = Uri.parse('$url/$id');
+    final respuesta = await (client?.delete(uri) ?? http.delete(uri));
     if (respuesta.statusCode != 200) {
       throw Exception('Error al eliminar estudiante');
     }

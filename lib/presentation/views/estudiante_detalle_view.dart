@@ -26,21 +26,24 @@ class EstudianteDetalleView extends StatelessWidget {
             const SizedBox(height: 8),
             Text(estudiante.email),
             const SizedBox(height: 24),
-            FutureBuilder<double>(
-              future: vm.obtenerPromedio(estudiante.id!),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                }
-                if (snapshot.hasError) {
-                  return const Text('No se pudo calcular el promedio');
-                }
-                return Text(
-                  'Promedio: ${snapshot.data!.toStringAsFixed(2)}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                );
-              },
-            ),
+            if (estudiante.id == null)
+              const Text('Promedio no disponible para este estudiante.')
+            else
+              FutureBuilder<double>(
+                future: vm.obtenerPromedio(estudiante.id!),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  }
+                  if (snapshot.hasError) {
+                    return const Text('No se pudo calcular el promedio');
+                  }
+                  return Text(
+                    'Promedio: ${snapshot.data!.toStringAsFixed(2)}',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  );
+                },
+              ),
           ],
         ),
       ),

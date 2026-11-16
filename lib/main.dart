@@ -15,14 +15,12 @@ import 'data/repositories/asignatura_repository_impl.dart';
 import 'domain/usecases/actualizar_asignatura.dart';
 import 'domain/usecases/crear_asignatura.dart';
 import 'domain/usecases/eliminar_asignatura.dart';
-import 'domain/usecases/existe_asignatura.dart';
 import 'domain/usecases/obtener_asignaturas.dart';
 import 'presentation/viewmodels/asignatura_viewmodel.dart';
 
 void main() {
   final estudianteRepo = EstudianteRepositoryImpl(api: EstudianteApi());
   final asignaturaRepo = AsignaturaRepositoryImpl(api: AsignaturaApi());
-  final existeAsignatura = ExisteAsignatura(repository: asignaturaRepo);
 
   runApp(
     MultiProvider(
