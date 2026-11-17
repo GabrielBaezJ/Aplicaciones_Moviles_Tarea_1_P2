@@ -93,8 +93,9 @@ class _NotaFormViewState extends State<NotaFormView> {
                     .toList(),
                 onChanged: (value) =>
                     setState(() => _estudianteSeleccionado = value),
-                validator: (value) =>
-                    value == null ? 'Seleccione un estudiante' : null,
+                validator: (value) => value == null || value.id == null
+                    ? 'El estudiante no tiene un identificador válido'
+                    : null,
               ),
               DropdownButtonFormField<Asignatura>(
                 initialValue: _asignaturaSeleccionada,

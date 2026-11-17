@@ -21,13 +21,21 @@ class EstudianteApi {
           'La respuesta de estudiantes debe ser una lista.',
         );
       }
-      return datos.map((item) {
+      return datos.asMap().entries.map((entry) {
+        final item = entry.value;
         if (item is! Map<String, dynamic>) {
           throw const FormatException(
             'Cada estudiante debe ser un objeto JSON.',
           );
         }
-        return EstudianteModel.fromJson(item);
+        final estudiante = EstudianteModel.fromJson(item);
+        if (estudiante.id != null) return estudiante;
+        return EstudianteModel(
+          id: entry.key + 1,
+          nombre: estudiante.nombre,
+          apellido: estudiante.apellido,
+          email: estudiante.email,
+        );
       }).toList();
     }
     throw Exception('Error al cargar estudiantes');

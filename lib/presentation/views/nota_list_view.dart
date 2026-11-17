@@ -41,7 +41,7 @@ class _NotaListViewState extends State<NotaListView> {
       if (_estudianteSeleccionado == null && lista.isNotEmpty) {
         setState(() => _estudianteSeleccionado = lista.first);
       }
-      if (_estudianteSeleccionado != null) {
+      if (_estudianteSeleccionado?.id != null) {
         await notas.cargarNotas(_estudianteSeleccionado!.id!);
       }
       if (mounted) setState(() {});
@@ -50,8 +50,9 @@ class _NotaListViewState extends State<NotaListView> {
 
   Future<void> _seleccionarEstudiante(Estudiante? estudiante) async {
     setState(() => _estudianteSeleccionado = estudiante);
-    if (estudiante != null) {
-      await context.read<NotaViewModel>().cargarNotas(estudiante.id!);
+    final estudianteId = estudiante?.id;
+    if (estudianteId != null) {
+      await context.read<NotaViewModel>().cargarNotas(estudianteId);
     }
   }
 
@@ -111,12 +112,14 @@ class _NotaListViewState extends State<NotaListView> {
                           asignatura?.nombre ??
                           'Asignatura ${nota.asignaturaId}',
                       situacion: vm.situacion(nota.valor),
-                      onDelete: () => vm.eliminar(nota.id!),
+                      onDelete: nota.id == null
+                          ? null
+                          : () => vm.eliminar(nota.id!),
                     );
                   },
                 ),
               ),
-            if (_estudianteSeleccionado != null)
+            if (_estudianteSeleccionado?.id != null)
               FutureBuilder<double>(
                 future: vm.promedio(_estudianteSeleccionado!.id!),
                 builder: (context, snapshot) {
@@ -141,7 +144,7 @@ class _NotaTile extends StatelessWidget {
   final Nota nota;
   final String asignatura;
   final String situacion;
-  final Future<bool> Function() onDelete;
+  final Future<bool> Function()? onDelete;
 
   const _NotaTile({
     required this.nota,
@@ -159,16 +162,17 @@ class _NotaTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(nota.valor.toStringAsFixed(2)),
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () async {
-              final ok = await onDelete();
-              if (!ok || !context.mounted) return;
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(const SnackBar(content: Text('Nota eliminada')));
-            },
-          ),
+          if (onDelete != null)
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () async {
+                final ok = await onDelete!();
+                if (!ok || !context.mounted) return;
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(const SnackBar(content: Text('Nota eliminada')));
+              },
+            ),
         ],
       ),
     );
