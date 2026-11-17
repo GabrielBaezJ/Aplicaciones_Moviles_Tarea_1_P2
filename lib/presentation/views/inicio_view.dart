@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../routes/app_routes.dart';
 
 class InicioView extends StatelessWidget {
@@ -27,7 +28,12 @@ class InicioView extends StatelessWidget {
               icon: const Icon(Icons.book),
               label: const Text('Asignaturas'),
             ),
-            // TODO: botón de Notas (Integrante 3)
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pushNamed(context, AppRoutes.notas),
+              icon: const Icon(Icons.assessment),
+              label: const Text('Notas'),
+            ),
           ],
         ),
       ),

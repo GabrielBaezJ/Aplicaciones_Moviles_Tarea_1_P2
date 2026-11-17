@@ -17,10 +17,20 @@ import 'domain/usecases/crear_asignatura.dart';
 import 'domain/usecases/eliminar_asignatura.dart';
 import 'domain/usecases/obtener_asignaturas.dart';
 import 'presentation/viewmodels/asignatura_viewmodel.dart';
+import 'data/datasources/nota_remote_datasource.dart';
+import 'data/repositories/nota_repository_impl.dart';
+import 'domain/usecases/calcular_promedio.dart';
+import 'domain/usecases/determinar_situacion_academica.dart';
+import 'domain/usecases/eliminar_nota.dart';
+import 'domain/usecases/obtener_notas_por_estudiante.dart';
+import 'domain/usecases/registrar_nota.dart';
+import 'presentation/viewmodels/nota_viewmodel.dart';
 
 void main() {
   final estudianteRepo = EstudianteRepositoryImpl(api: EstudianteApi());
   final asignaturaRepo = AsignaturaRepositoryImpl(api: AsignaturaApi());
+  final notaRepo = NotaRepositoryImpl(datasource: NotaRemoteDatasource());
+  final calcularPromedio = CalcularPromedio(repository: notaRepo);
 
   runApp(
     MultiProvider(
@@ -34,9 +44,9 @@ void main() {
             ),
             eliminarEstudiante: EliminarEstudiante(
               repository: estudianteRepo,
-              tieneNotas: (id) async => false,
+              tieneNotas: notaRepo.tieneNotas,
             ),
-            obtenerPromedio: (id) async => 0.0,
+            obtenerPromedio: calcularPromedio.ejecutar,
           ),
         ),
         ChangeNotifierProvider(
@@ -47,6 +57,21 @@ void main() {
               repository: asignaturaRepo,
             ),
             eliminarAsignatura: EliminarAsignatura(repository: asignaturaRepo),
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => NotaViewModel(
+            registrarNota: RegistrarNota(
+              notaRepository: notaRepo,
+              estudianteRepository: estudianteRepo,
+              asignaturaRepository: asignaturaRepo,
+            ),
+            obtenerNotasPorEstudiante: ObtenerNotasPorEstudiante(
+              repository: notaRepo,
+            ),
+            calcularPromedio: calcularPromedio,
+            determinarSituacion: DeterminarSituacionAcademica(),
+            eliminarNota: EliminarNota(repository: notaRepo),
           ),
         ),
       ],

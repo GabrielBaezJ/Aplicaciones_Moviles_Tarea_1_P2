@@ -6,6 +6,8 @@ import '../presentation/views/estudiante_detalle_view.dart';
 import '../presentation/views/estudiante_form_view.dart';
 import '../presentation/views/estudiante_list_view.dart';
 import '../presentation/views/inicio_view.dart';
+import '../presentation/views/nota_form_view.dart';
+import '../presentation/views/nota_list_view.dart';
 
 class AppRoutes {
   static const String inicio = '/inicio';
@@ -14,8 +16,8 @@ class AppRoutes {
   static const String estudianteDetalle = '/estudiante-detalle';
   static const String asignaturas = '/asignaturas';
   static const String asignaturaForm = '/asignatura-form';
-
-  //TODO: rutas de notas (Integrante 3)
+  static const String notas = '/notas';
+  static const String notaForm = '/nota-form';
 
   static Map<String, WidgetBuilder> get rutas => {
     inicio: (_) => const InicioView(),
@@ -24,5 +26,7 @@ class AppRoutes {
     estudianteDetalle: (_) => const EstudianteDetalleView(),
     asignaturas: (_) => const AsignaturaListView(),
     asignaturaForm: (_) => const AsignaturaFormView(),
+    notas: (_) => const NotaListView(),
+    notaForm: (_) => const NotaFormView(),
   };
 }

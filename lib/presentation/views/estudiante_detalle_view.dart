@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../domain/entities/estudiantes.dart';
+import '../../routes/app_routes.dart';
 import '../viewmodels/estudiante_viewmodel.dart';
 
 class EstudianteDetalleView extends StatelessWidget {
@@ -25,6 +26,16 @@ class EstudianteDetalleView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(estudiante.email),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () => Navigator.pushNamed(
+                context,
+                AppRoutes.notas,
+                arguments: estudiante,
+              ),
+              icon: const Icon(Icons.assessment),
+              label: const Text('Ver notas'),
+            ),
             const SizedBox(height: 24),
             if (estudiante.id == null)
               const Text('Promedio no disponible para este estudiante.')
