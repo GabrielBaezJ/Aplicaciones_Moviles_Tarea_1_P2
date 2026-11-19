@@ -56,13 +56,11 @@ class _EstudianteListViewState extends State<EstudianteListView> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.edit),
-                        onPressed: e.id == null
-                            ? null
-                            : () => Navigator.pushNamed(
-                                context,
-                                AppRoutes.estudianteForm,
-                                arguments: e,
-                              ),
+                        onPressed: () => Navigator.pushNamed(
+                          context,
+                          AppRoutes.estudianteForm,
+                          arguments: e,
+                        ),
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete),

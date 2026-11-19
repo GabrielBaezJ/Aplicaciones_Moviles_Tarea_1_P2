@@ -21,21 +21,13 @@ class EstudianteApi {
           'La respuesta de estudiantes debe ser una lista.',
         );
       }
-      return datos.asMap().entries.map((entry) {
-        final item = entry.value;
+      return datos.map((item) {
         if (item is! Map<String, dynamic>) {
           throw const FormatException(
             'Cada estudiante debe ser un objeto JSON.',
           );
         }
-        final estudiante = EstudianteModel.fromJson(item);
-        if (estudiante.id != null) return estudiante;
-        return EstudianteModel(
-          id: entry.key + 1,
-          nombre: estudiante.nombre,
-          apellido: estudiante.apellido,
-          email: estudiante.email,
-        );
+        return EstudianteModel.fromJson(item);
       }).toList();
     }
     throw Exception('Error al cargar estudiantes');
@@ -65,7 +57,11 @@ class EstudianteApi {
   Future<EstudianteModel> actualizarEstudiante(
     EstudianteModel estudiante,
   ) async {
-    final uri = Uri.parse('$url/${estudiante.id}');
+    final id = estudiante.idRemoto ?? estudiante.id?.toString();
+    if (id == null || id.isEmpty) {
+      throw Exception('La API no devolvió el identificador del estudiante. Revisa el campo ID en MockAPI.');
+    }
+    final uri = Uri.parse('$url/${Uri.encodeComponent(id)}');
     final respuesta =
         await (client?.put(
               uri,
@@ -78,11 +74,11 @@ class EstudianteApi {
               body: jsonEncode(estudiante.toJson()),
             ));
     if (respuesta.statusCode == 200 || respuesta.statusCode == 201) {
-      return EstudianteModel.fromJson(
-        jsonDecode(respuesta.body) as Map<String, dynamic>,
-      );
+      final datos = jsonDecode(respuesta.body) as Map<String, dynamic>;
+      return EstudianteModel.fromJson({...estudiante.toJson(), ...datos, 'id': id});
     }
-    throw Exception('Error al actualizar estudiante');
+    if (respuesta.statusCode == 204) return estudiante;
+    throw Exception('No se pudo actualizar el estudiante (HTTP ${respuesta.statusCode}).');
   }
 
   //metodo eliminar estudiante

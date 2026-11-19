@@ -45,6 +45,7 @@ class _EstudianteFormViewState extends State<EstudianteFormView> {
     final vm = context.read<EstudianteViewModel>();
     final estudiante = Estudiante(
       id: _estudiante?.id,
+      idRemoto: _estudiante?.idRemoto,
       nombre: _nombre.text.trim(),
       apellido: _apellido.text.trim(),
       email: _email.text.trim(),
@@ -52,7 +53,15 @@ class _EstudianteFormViewState extends State<EstudianteFormView> {
     final ok = _estudiante == null
         ? await vm.agregar(estudiante)
         : await vm.editar(estudiante);
-    if (ok && mounted) Navigator.pop(context);
+    if (!mounted) return;
+    if (ok) {
+      Navigator.pop(context);
+    } else {
+      final mensaje = vm.error?.replaceFirst('Exception: ', '');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(mensaje ?? 'No se pudo guardar el estudiante.')),
+      );
+    }
   }
 
   @override

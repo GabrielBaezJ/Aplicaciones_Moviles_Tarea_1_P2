@@ -57,7 +57,9 @@ class EstudianteViewModel extends ChangeNotifier {
   Future<bool> editar(Estudiante estudiante) async {
     try {
       final actualizado = await actualizarEstudiante.ejecutar(estudiante);
-      final i = estudiantes.indexWhere((e) => e.id == estudiante.id);
+      final i = estudiantes.indexWhere((e) => estudiante.idRemoto != null
+          ? e.idRemoto == estudiante.idRemoto
+          : e.id == estudiante.id);
       if (i != -1) estudiantes[i] = actualizado;
       error = null;
       notifyListeners();

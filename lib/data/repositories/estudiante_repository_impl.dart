@@ -12,6 +12,7 @@ class EstudianteRepositoryImpl implements EstudianteRepository {
   Future<Estudiante> actualizarEstudiante(Estudiante estudiante) {
     final model = EstudianteModel(
       id: estudiante.id,
+      idRemoto: estudiante.idRemoto,
       nombre: estudiante.nombre,
       apellido: estudiante.apellido,
       email: estudiante.email,
@@ -23,6 +24,7 @@ class EstudianteRepositoryImpl implements EstudianteRepository {
   Future<Estudiante> crearEstudiante(Estudiante estudiante) {
     final model = EstudianteModel(
       id: estudiante.id,
+      idRemoto: estudiante.idRemoto,
       nombre: estudiante.nombre,
       apellido: estudiante.apellido,
       email: estudiante.email,
